@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Intelligence Waste Classification System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="logo">
+                <i class="fa-solid fa-recycle"></i>
+                <h1>Artificial Intelligence Waste Classification System</h1>
+            </div>
+            <div class="header-right">
+                <div class="api-status offline" id="apiStatus" title="Connection Status">
+                    <i class="fa-solid fa-circle"></i> <span>Offline</span>
+                </div>
+                <div class="history-link">
+                    <a href="history.html">
+                        <i class="fa-solid fa-chart-line"></i> คลิกเพื่อดูประวัติย้อนหลัง
+                    </a>
+                </div>
+                <div class="date-display" id="dateDisplay">
+                    Loading Date...
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-grid">
+
+            <!-- Top Row: Bin Status -->
+            <section class="bin-section">
+                <div class="card bin-status-card full-width">
+                    <div class="bin-header">
+                        <h2>สถานะของถังขยะ 4 ช่อง</h2>
+                        <div class="simulation-toggle">
+                            <!-- Optional: Toggle for controls -->
+                        </div>
+                    </div>
+
+                    <div class="bin-display-row">
+                        <!-- 4 Circles -->
+                        <div class="bin-circle-item">
+                            <div class="circular-progress" id="binGauge0">
+                                <div class="value-container">0%</div>
+                            </div>
+                            <p class="status-label">ช่องที่ 1</p>
+                            <p class="status-text" id="binStatusText0">ปกติ</p>
+                        </div>
+                        <div class="bin-circle-item">
+                            <div class="circular-progress" id="binGauge1">
+                                <div class="value-container">0%</div>
+                            </div>
+                            <p class="status-label">ช่องที่ 2</p>
+                            <p class="status-text" id="binStatusText1">ปกติ</p>
+                        </div>
+                        <div class="bin-circle-item">
+                            <div class="circular-progress" id="binGauge2">
+                                <div class="value-container">0%</div>
+                            </div>
+                            <p class="status-label">ช่องที่ 3</p>
+                            <p class="status-text" id="binStatusText2">ปกติ</p>
+                        </div>
+                        <div class="bin-circle-item">
+                            <div class="circular-progress" id="binGauge3">
+                                <div class="value-container">0%</div>
+                            </div>
+                            <p class="status-label">ช่องที่ 4</p>
+                            <p class="status-text" id="binStatusText3">ปกติ</p>
+                        </div>
+
+                        <!-- Manual Controls (Compact) -->
+                        <div class="manual-controls-compact">
+                            <h3>จำลองเซ็นเซอร์</h3>
+                            <div class="slider-row"><label>1</label><input type="range" id="sensorSlider0" min="0"
+                                    max="100" value="0"></div>
+                            <div class="slider-row"><label>2</label><input type="range" id="sensorSlider1" min="0"
+                                    max="100" value="0"></div>
+                            <div class="slider-row"><label>3</label><input type="range" id="sensorSlider2" min="0"
+                                    max="100" value="0"></div>
+                            <div class="slider-row"><label>4</label><input type="range" id="sensorSlider3" min="0"
+                                    max="100" value="0"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Middle Row: Counting Panel -->
+            <section class="counting-section">
+                <div class="card counting-panel full-width">
+                    <div class="panel-header">
+                        <h2>บันทึกจำนวนขยะ</h2>
+                        <button id="resetBtn" class="reset-btn"><i class="fa-solid fa-rotate-left"></i> รีเซ็ต</button>
+                    </div>
+                    <div class="waste-grid large-grid">
+                        <!-- Cards generated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bottom Row: Stats -->
+            <section class="stats-section">
+                <div class="card summary-card">
+                    <h2>สรุปยอดรวมขยะวันนี้</h2>
+                    <div class="total-display-large">
+                        <strong id="grandTotal">0</strong>
+                        <span>ชิ้น</span>
+                    </div>
+                    <div class="chart-container" style="height: 200px;">
+                        <canvas id="summaryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card history-card">
+                    <h2>ประวัติย้อนหลัง 7 วัน</h2>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="historyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
