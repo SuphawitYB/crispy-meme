@@ -7,7 +7,7 @@ import { getDatabase, ref, onValue, set, get, runTransaction } from "https://www
 // =========================================================================
 // 1. ถ้ารันในเครื่องตัวเอง (Localhost) ให้ใช้: "" (เว้นว่าง) หรือ "http://localhost:5000"
 // 2. ถ้าเอาเว็บขึ้น Netlify ต้องใส่ URL ของ ngrok ที่ได้มา เช่น "https://xxxx.ngrok-free.app"
-const SERVER_URL = "";
+const SERVER_URL = "https://crispy-meme-1.onrender.com";
 // =========================================================================
 
 const wasteClasses = [
@@ -54,33 +54,13 @@ let isOnline = false;
 // Debug Logger
 function logToScreen(msg) {
     console.log(msg);
-    const debugEl = document.getElementById('debugConsole');
-    if (debugEl) {
-        const p = document.createElement('div');
-        p.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-        p.style.borderBottom = "1px solid #333";
-        debugEl.prepend(p);
-    }
+    // Visual debug console removed
 }
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
-    // Create Debug Element
-    const dbg = document.createElement('div');
-    dbg.id = 'debugConsole';
-    dbg.style.position = 'fixed';
-    dbg.style.bottom = '0';
-    dbg.style.left = '0';
-    dbg.style.width = '100%';
-    dbg.style.height = '150px';
-    dbg.style.background = 'rgba(0,0,0,0.8)';
-    dbg.style.color = '#0f0';
-    dbg.style.fontSize = '12px';
-    dbg.style.overflowY = 'scroll';
-    dbg.style.zIndex = '9999';
-    dbg.style.padding = '10px';
-    dbg.style.fontFamily = 'monospace';
-    document.body.appendChild(dbg);
+    // Debug Element removed
+
 
     logToScreen("DOM Loaded. Script starting...");
 
@@ -602,7 +582,5 @@ function renderHistoryTable(history) {
         tbody.appendChild(tr);
     });
 }
-
-
 
 
