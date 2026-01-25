@@ -15,7 +15,7 @@ app = Flask(__name__, static_url_path='', static_folder='.')
 CORS(app)
 
 # Firebase Configuration
-FIREBASE_DB_URL = "https://smartbin-tce-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_DB_URL = os.environ.get("FIREBASE_DB_URL", "https://smartbin-tce-default-rtdb.asia-southeast1.firebasedatabase.app")
 
 # Default State
 default_state = {
@@ -33,28 +33,7 @@ current_data = default_state.copy()
 data_lock = threading.Lock()
 is_dirty = False
 
-def push_to_firebase():
-    """Push entire state to Firebase (Background Worker)"""
-    global is_dirty
-    while True:
-        if is_dirty:
-            try:
-                with data_lock:
-                    # Create copy to send
-                    payload = json.loads(json.dumps(current_data))
-                
-                # Use PUT to overwrite/sync everything (or PATCH for partial)
-                # We use PATCH to allow specific updates if needed, but here we sync root
-                requests.patch(f"{FIREBASE_DB_URL}/.json", json=payload, verify=False)
-                
-                is_dirty = False
-                print("Synced to Firebase")
-            except Exception as e:
-                print(f"Firebase Sync Error: {e}")
-        time.sleep(1)
 
-# Start background thread
-threading.Thread(target=push_to_firebase, daemon=True).start()
 
 def load_initial_data():
     """Load data from Firebase on startup"""
@@ -91,6 +70,15 @@ def home():
 def get_status():
     return jsonify(current_data)
 
+def save_to_firebase():
+    """Helper to save immediate state to Firebase"""
+    try:
+        # Save entire state for safety
+        requests.patch(f"{FIREBASE_DB_URL}/.json", json=current_data, verify=False)
+        print("✅ Saved to Firebase")
+    except Exception as e:
+        print(f"❌ Save Error: {e}")
+
 @app.route('/api/detect', methods=['POST'])
 def detect_object():
     content = request.json
@@ -100,7 +88,6 @@ def detect_object():
         count_to_add = content.get('count', 1)
         today_str = datetime.now().strftime('%Y-%m-%d')
         
-        global is_dirty
         with data_lock:
             # Update RAM
             current_data['counts'][class_id] += count_to_add
@@ -114,8 +101,8 @@ def detect_object():
             
             current_data['history'][today_str][class_id] += count_to_add
             
-            # Mark for sync
-            is_dirty = True
+        # DIRECT SAVE - No background thread
+        save_to_firebase()
             
         return jsonify({"success": True, "new_count": current_data['counts'][class_id]})
     
@@ -123,10 +110,9 @@ def detect_object():
 
 @app.route('/api/reset', methods=['POST'])
 def reset_data():
-    global is_dirty
     with data_lock:
         current_data['counts'] = {k: 0 for k in current_data['counts']}
-        is_dirty = True
+    save_to_firebase()
     return jsonify({"success": True})
 
 @app.route('/api/bin-level', methods=['POST'])
@@ -135,19 +121,19 @@ def set_bin_level():
     levels = content.get('levels')
     level = content.get('level')
     
-    global is_dirty
     with data_lock:
         if levels and isinstance(levels, list) and len(levels) == 4:
             current_data['bin_levels'] = levels
-            is_dirty = True
+            save_to_firebase()
             return jsonify({"success": True})
             
         if level is not None:
              current_data['bin_levels'][0] = int(level)
-             is_dirty = True
+             save_to_firebase()
              return jsonify({"success": True})
              
     return jsonify({"success": False}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
