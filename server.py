@@ -25,7 +25,8 @@ default_state = {
         "paper_carton": 0, "glass_bottle": 0
     },
     "bin_levels": [0, 0, 0, 0],
-    "history": {}
+    "history": {},
+    "last_reset_date": datetime.now().strftime('%Y-%m-%d')
 }
 
 # In-memory state (acts as cache)
@@ -53,6 +54,9 @@ def load_initial_data():
                 
             if 'history' not in remote_data:
                 remote_data['history'] = {}
+
+            if 'last_reset_date' not in remote_data:
+                remote_data['last_reset_date'] = datetime.now().strftime('%Y-%m-%d')
                 
             current_data = remote_data
             print("Data loaded successfully")
@@ -62,12 +66,33 @@ def load_initial_data():
 # Load initial data
 load_initial_data()
 
+def check_daily_reset():
+    """Check if we entered a new day and reset counts if needed"""
+    global current_data, is_dirty
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    
+    with data_lock:
+        last_reset = current_data.get('last_reset_date', '')
+        
+        if last_reset != today_str:
+            print(f"🔄 New Day Detected! ({last_reset} -> {today_str}) Resetting counts...")
+            
+            # Reset Counts
+            current_data['counts'] = {k: 0 for k in current_data['counts']}
+            
+            # Update Reset Date
+            current_data['last_reset_date'] = today_str
+            
+            # Save immediately
+            save_to_firebase()
+
 @app.route('/', methods=['GET'])
 def home():
     return app.send_static_file('index.html')
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
+    check_daily_reset() # Check for reset on status poll
     return jsonify(current_data)
 
 def save_to_firebase():
@@ -83,6 +108,8 @@ def save_to_firebase():
 def detect_object():
     content = request.json
     class_id = content.get('class_id')
+    
+    check_daily_reset() # Check for reset before adding count
     
     if class_id in current_data['counts']:
         count_to_add = content.get('count', 1)
