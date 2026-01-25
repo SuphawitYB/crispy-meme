@@ -7,7 +7,7 @@ import { getDatabase, ref, onValue, set, get, runTransaction } from "https://www
 // =========================================================================
 // 1. ถ้ารันในเครื่องตัวเอง (Localhost) ให้ใช้: "" (เว้นว่าง) หรือ "http://localhost:5000"
 // 2. ถ้าเอาเว็บขึ้น Netlify ต้องใส่ URL ของ ngrok ที่ได้มา เช่น "https://xxxx.ngrok-free.app"
-const SERVER_URL = "";
+const SERVER_URL = "https://crispy-meme-uqv3.onrender.com";
 // =========================================================================
 
 const wasteClasses = [
