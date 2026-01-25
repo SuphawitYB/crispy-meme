@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History SmartBin TCE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="logo">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <h1>ประวัติการทิ้งขยะย้อนหลัง</h1>
+            </div>
+            <div class="header-right">
+                <a href="index.html" class="back-link">
+                    <i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-grid full-view">
+
+            <section class="stats-section full-width">
+                <div class="card history-card full-height">
+                    <h2>กราฟแสดงแนวโน้ม (30 วันล่าสุด)</h2>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="fullHistoryChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="table-section">
+                <div class="card">
+                    <h2>ตารางข้อมูลรายวัน</h2>
+                    <div class="table-responsive">
+                        <table class="history-table" id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>วันที่</th>
+                                    <th>รวมทั้งหมด (ชิ้น)</th>
+                                    <th>รายละเอียด (ประเภท: จำนวน)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" style="text-align:center;">กำลังโหลดข้อมูล...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script type="module">
+        import { updateCount } from './app.js'; // Ensure it's available if needed
+        // Inline init handling
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.initHistoryPage) window.initHistoryPage();
+        });
+    </script>
+</body>
+
+</html>
