@@ -205,12 +205,29 @@ function updateCount(id, delta) {
 }
 
 async function resetDataFirebase() {
-    set(ref(db, 'counts'), {
-        "plastic_bottle": 0, "plastic_cap": 0, "plastic_cup": 0, "aluminum_can": 0,
-        "plastic_bag": 0, "plastic_film": 0, "battery": 0, "paper_box": 0,
-        "paper_carton": 0, "glass_bottle": 0
-    });
-    // Don't reset history
+    const apiUrl = SERVER_URL ? `${SERVER_URL}/api/reset` : '/api/reset';
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('ลบข้อมูลเรียบร้อยแล้ว');
+            // UI will update automatically via Firebase listener
+        } else {
+            console.error("Reset Failed:", data);
+            alert('เกิดข้อผิดพลาดในการรีเซ็ต: ' + (data.error || 'Unknown Error'));
+        }
+    } catch (error) {
+        console.error("Reset Network Error:", error);
+        alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+    }
 }
 
 /*
