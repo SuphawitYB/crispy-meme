@@ -586,7 +586,7 @@ function renderHistoryTable(history) {
         let breakdownHtml = '';
         wasteClasses.forEach(c => {
             if (dayData[c.id] > 0) {
-                breakdownHtml += `<span class="badge" style="background:${c.color}20; color:${c.color}">${c.name}: ${dayData[c.id]}</span>`;
+                breakdownHtml += `<span class="badge" style="background:${c.color}20; color:#000000">${c.name}: ${dayData[c.id]}</span>`;
             }
         });
 
