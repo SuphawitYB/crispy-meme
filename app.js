@@ -350,8 +350,9 @@ function updateBinStatusVisuals() {
             if (slider) slider.value = level;
             if (valLabel) valLabel.textContent = level;
 
-            // Ring Color
-            progress.style.background = `conic-gradient(${color} ${level * 3.6}deg, #e5e7eb ${level * 3.6}deg)`;
+            // Ring Color: User requested "No Gauge" (no partial fill), just solid Status Color
+            // So we make it a full 360deg ring of the determined color.
+            progress.style.background = `conic-gradient(${color} 360deg, ${color} 360deg)`;
         }
     }
 }
