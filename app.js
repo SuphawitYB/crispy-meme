@@ -310,6 +310,8 @@ function updateUI() {
 }
 
 function updateBinStatusVisuals() {
+    const BIN_HEIGHT_CM = 30;
+
     // Loop through 4 compartments
     for (let i = 0; i < 4; i++) {
         const level = binLevels[i] || 0;
@@ -320,27 +322,36 @@ function updateBinStatusVisuals() {
         const valLabel = document.getElementById(`val${i}`);
 
         if (progress && valueContainer && statusText) {
-            valueContainer.textContent = `${level}%`;
 
-            // Update slider if it exists
-            if (slider) slider.value = level;
-            if (valLabel) valLabel.textContent = level;
+            // Calculate remaining space (cm) from percentage
+            // 100% = Full (0cm remaining)
+            // 0% = Empty (30cm remaining)
+            const remainingCm = BIN_HEIGHT_CM * (1 - (level / 100));
 
+            // Logic: <= 5cm is Full
             let color = '#10b981'; // Green
             let text = 'ปกติ';
 
-            if (level > 70) {
-                color = '#f59e0b'; // Yellow
-                text = 'เริ่มเต็ม';
-            }
-            if (level > 90) {
+            if (remainingCm <= 5) {
                 color = '#ef4444'; // Red
                 text = 'เต็ม!';
             }
 
-            progress.style.background = `conic-gradient(${color} ${level * 3.6}deg, #e5e7eb ${level * 3.6}deg)`;
+            // Show Status Text inside the circle instead of %
+            valueContainer.textContent = text;
+            valueContainer.style.color = color;
+            valueContainer.style.fontSize = '1.25rem'; // Make it readable
+
+            // Update external text label too
             statusText.textContent = text;
             statusText.style.color = color;
+
+            // Maintain Slider
+            if (slider) slider.value = level;
+            if (valLabel) valLabel.textContent = level;
+
+            // Ring Color
+            progress.style.background = `conic-gradient(${color} ${level * 3.6}deg, #e5e7eb ${level * 3.6}deg)`;
         }
     }
 }
