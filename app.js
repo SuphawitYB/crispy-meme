@@ -80,17 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start Listening to Realtime Database
     listenToFirebase();
 
-    // Event Listeners for 4 Sliders (Simulation)
-    [0, 1, 2, 3].forEach(index => {
-        const slider = document.getElementById(`sensorSlider${index}`);
-        if (slider) {
-            slider.addEventListener('input', (e) => {
-                // Determine if we need to update whole array or just one
-                // For simulation simplicity, we read all sliders and update array
-                updateBinLevelsFromSliders();
-            });
-        }
-    });
+
 
     document.getElementById('resetBtn').addEventListener('click', () => {
         if (confirm('คุณต้องการรีเซ็ตข้อมูลทั้งหมดใช่หรือไม่?')) {
@@ -154,22 +144,7 @@ function listenToFirebase() {
     }
 }
 
-function updateBinLevelsFromSliders() {
-    // Read all sliders
-    const newLevels = [];
-    for (let i = 0; i < 4; i++) {
-        const slider = document.getElementById(`sensorSlider${i}`);
-        newLevels.push(parseInt(slider.value) || 0);
-    }
 
-    // Update local immediately for smooth UI
-    binLevels = newLevels;
-    localStorage.setItem('smartbin_binLevels', JSON.stringify(binLevels));
-    updateBinStatusVisuals();
-
-    // Send to Firebase
-    set(ref(db, 'bin_levels'), newLevels);
-}
 
 function updateCount(id, delta) {
     // Optimistic Update
@@ -318,8 +293,7 @@ function updateBinStatusVisuals() {
         const progress = document.getElementById(`binGauge${i}`);
         const valueContainer = progress ? progress.querySelector('.value-container') : null;
         const statusText = document.getElementById(`binStatusText${i}`);
-        const slider = document.getElementById(`sensorSlider${i}`);
-        const valLabel = document.getElementById(`val${i}`);
+
 
         if (progress && valueContainer && statusText) {
 
@@ -346,9 +320,7 @@ function updateBinStatusVisuals() {
             statusText.textContent = text;
             statusText.style.color = color;
 
-            // Maintain Slider
-            if (slider) slider.value = level;
-            if (valLabel) valLabel.textContent = level;
+
 
             // Ring Color: User requested "No Gauge" (no partial fill), just solid Status Color
             // So we make it a full 360deg ring of the determined color.
